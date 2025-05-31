@@ -9,11 +9,11 @@
 #' @param series_loc   File path to save/load nflSeriesWeek RDA (e.g. ".../nflSeriesWeek.rda")
 #' @param recompute_all Logical, if TRUE forces full recalculation even if saved file exists (default FALSE)
 #' @return Tibble of weekly series conversion rates (nflSeriesWeek)
-calc_weekly_series_stats <- function(pbp_df = pbp_data, 
-                                     series_loc, 
+calc_weekly_series_stats <- function(pbp_df = pbp_data,
+                                     series_loc,
                                      recompute_all = FALSE) {
   # uses dplyr, nflverse
-  
+
   if (!recompute_all && file.exists(series_loc)) {
     cat("Updating Weekly Series Stats\n",
         "Calculating", get_current_season(), "season Data")
@@ -22,7 +22,7 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
     nflSeriesWeek <- nflSeriesWeek |> filter(season != get_current_season())
     # compute only current season
     pbpData_series <- pbp_df |> filter(season == get_current_season())
-    nflSeriesWeekTemp <- with_progress({
+    nflSeriesWeekTemp <- progressr::with_progress({
       calculate_series_conversion_rates(pbpData_series, weekly = TRUE)
     })
     nflSeriesWeek <- bind_rows(nflSeriesWeek, nflSeriesWeekTemp)
@@ -30,11 +30,11 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
     cat("Recomputing All Weekly Series Stats\n",
         "Calculating", min(pbp_df$season), "-", get_current_season(), "season Data")
     # full recalculation
-    nflSeriesWeek <- with_progress({
+    nflSeriesWeek <- progressr::with_progress({
       calculate_series_conversion_rates(pbp_df, weekly = TRUE)
     })
   }
-  
+
   save(nflSeriesWeek, file = series_loc)
   return(nflSeriesWeek)
 }
@@ -48,16 +48,16 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
 #' @return Tibble with one row per game-team containing series conversion rates
 compute_series_data <- function(gameDataLong, pbpData, series_loc, recompute_all = FALSE) {
   # uses dplyr
-  
+
   # STEP 1: Load or generate series conversion rates
   seriesData <- update_series_data(pbpData, series_loc, recompute_all)
-  
+
   # STEP 2: Merge with gameDataLong to enforce ordering
   id_cols <- c("game_id", "season", "week", "team", "opponent")
   seriesFeatures <- gameDataLong |>
     select(all_of(id_cols)) |>
     left_join(seriesData, by = join_by(season, week, team))
-  
+
   return(seriesFeatures)
 }
 

@@ -9,14 +9,14 @@
 #' @param stats_loc     File path to save/load nflStatsWeek (e.g. ".../nflStatsWeek.rda")
 #' @param recompute_all Logical, if TRUE forces full recalculation even if saved file exists (default FALSE)
 #' @return Tibble of weekly team stats (nflStatsWeek)
-calc_weekly_team_stats <- function(seasons = all_seasons, 
+calc_weekly_team_stats <- function(seasons = all_seasons,
                                    sum_level = "week",
                                    stat_level = "team",
                                    season_level = "REG+POST",
-                                   stats_loc, 
+                                   stats_loc,
                                    recompute_all = FALSE) {
   # uses dplyr, nflverse
-  
+
   if (!recompute_all && file.exists(stats_loc)) {
     cat("Updating Weekly Team Stats\n",
         "Calculating", get_current_season(), "season Data")
@@ -24,8 +24,8 @@ calc_weekly_team_stats <- function(seasons = all_seasons,
     # drop current season to refresh
     nflStatsWeek <- nflStatsWeek |>
       filter(season != get_current_season())
-    
-    temp <- with_progress({
+
+    temp <- progressr::with_progress({
       calculate_stats(
         seasons       = get_current_season(),
         summary_level = sum_level,
@@ -38,7 +38,7 @@ calc_weekly_team_stats <- function(seasons = all_seasons,
     cat("Recomputing All Weekly Team Stats\n",
         "Calculating", min(seasons), "-", get_current_season(), "season Data")
     # full recalculation
-    nflStatsWeek <- with_progress({
+    nflStatsWeek <- progressr::with_progress({
       calculate_stats(
         seasons       = seasons,
         summary_level = sum_level,
@@ -47,7 +47,7 @@ calc_weekly_team_stats <- function(seasons = all_seasons,
       )
     })
   }
-  
+
   save(nflStatsWeek, file = stats_loc)
   return(nflStatsWeek)
 }

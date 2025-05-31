@@ -43,57 +43,57 @@ compute_model_data_long <- function(#game_long_df,
                                     # redzone_df,
                                     window = 5,
                                     span   = 5) {
-  
+
   game_data <- compute_game_data(seasons = all_seasons)
   game_data_long <- compute_game_data_long(game_df = game_data)
-  load("app/feature-data/elo_data.rda")      # loads object `elo_data`
-  load("app/feature-data/srs_data.rda")      # loads object `srs_data`
-  load("app/feature-data/epa_data.rda")      # loads object `epa_data`
-  load("app/feature-data/scores_data.rda")   # loads object `scores_data`
-  load("app/feature-data/series_data.rda")   # loads object `series_data`
-  load("app/feature-data/turnover_data.rda") # loads object `turnover_data`
-  load("app/feature-data/redzone_data.rda")  # loads object `redzone_data`
-  
+  load("artifacts/data/elo_data.rda")      # loads object `elo_data`
+  load("artifacts/data/srs_data.rda")      # loads object `srs_data`
+  load("artifacts/data/epa_data.rda")      # loads object `epa_data`
+  load("artifacts/data/scores_data.rda")   # loads object `scores_data`
+  load("artifacts/data/series_data.rda")   # loads object `series_data`
+  load("artifacts/data/turnover_data.rda") # loads object `turnover_data`
+  load("artifacts/data/redzone_data.rda")  # loads object `redzone_data`
+
   id_cols <- c("game_id", "season", "week", "week_seq", "team", "opponent")
-  
+
   # (A) Join Elo features
   df1 <- process_elo_data(base_df = game_data_long,
                           elo_raw = elo_data)
-  
+
   # (B) Join SRS features
   df2 <- process_srs_data(base_df = df1,
                           srs_raw = srs_data)
-  
+
   # (C) Join EPA features (cumulative, rolling, EWMA, net)
   df3 <- process_epa_data(base_df = df2,
                           epa_raw = epa_data,
                           window  = window,
                           span    = span)
-  
+
   # (D) Join Scoring features
   df4 <- process_scores_data(base_df   = df3,
                              scores_raw = scores_data,
                              window     = window,
                              span       = span)
-  
+
   # (E) Join Series conversion rates
   df5 <- process_series_data(base_df    = df4,
                              series_raw = series_data,
                              window     = window,
                              span       = span)
-  
+
   # (F) Join Turnover features
   df6 <- process_turnover_data(base_df     = df5,
                                turnover_raw = turnover_data,
                                window       = window,
                                span         = span)
-  
+
   # (G) Join Redzone features and return
   model_data_long <- process_redzone_data(base_df     = df6,
                                           redzone_raw = redzone_data,
                                           window      = window,
                                           span        = span)
-  
+
   model_data_long <- model_data_long |>
     filter(!is.na(team_elo_pre))
   return(model_data_long)

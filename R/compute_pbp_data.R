@@ -9,13 +9,13 @@
 #' @return A tibble of play-by-play data, with the usual nflverse timestamp attribute
 compute_pbp_data <- function(seasons = 2006:most_recent_season()) {
   # ensure parallel backend is set
-  plan("multisession")
-  
+  future::plan("multisession")
+
   # wrap load_pbp in a progress bar
-  pbpData <- with_progress({
+  pbpData <- progressr::with_progress({
     load_pbp(seasons = seasons)
   })
-  
+
   return(pbpData)
 }
 

@@ -1,4 +1,4 @@
-# gameData.R
+# fct_compute_game_data.R
 # Helper script to compute and process game schedule data for the app
 
 # Dependencies: nflverse, tidyverse (loaded externally in UpdateData.R)

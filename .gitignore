@@ -1,1 +1,24 @@
+# R / RStudio artifacts
+.Rhistory
+.RData
 .Rproj.user
+
+# Built package files
+*.tar.gz
+*.Rcheck/
+
+# Local logs or caches
+*.log
+.cache/
+
+# Do not track generated artifacts
+artifacts/
+artifacts/data/
+artifacts/data/models/
+
+# If data-raw produces temp or output, ignore those
+data-raw/output/
+data-raw/tmp/
+
+# GitHub Actions logs (if any)
+logs/

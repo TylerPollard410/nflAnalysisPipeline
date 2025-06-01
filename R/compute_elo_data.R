@@ -25,9 +25,8 @@ compute_elo_data <- function(
     cache_file             = "./app/data/elo_data.rda",
     season_factor          = 0.6
 ) {
-  library(dplyr)
 
-  game_df <- game_df %>%
+  game_df <- game_df |>
     arrange(season, week, as.Date(gameday), game_id)
 
   if (recompute_all) {
@@ -48,7 +47,7 @@ compute_elo_data <- function(
     ratings   <- setNames(rep(initial_elo, length(teams_all)), teams_all)
     for (ss in sort(unique(game_df$season))) {
       message("Season start: ", ss)
-      games_ss <- game_df %>% filter(season == ss)
+      games_ss <- game_df |> filter(season == ss)
       if (ss != min(game_df$season)) {
         m       <- mean(ratings, na.rm = TRUE)
         ratings <- ratings * season_factor + m * (1 - season_factor)
@@ -76,11 +75,11 @@ compute_elo_data <- function(
   last_week   <- max(filter(elo_hist, season == last_season)$week)
   message("Cache covers up through Season ", last_season, " Week ", last_week)
 
-  remainder <- game_df %>%
+  remainder <- game_df |>
     filter(season == last_season, week > last_week)
-  future    <- game_df %>%
+  future    <- game_df |>
     filter(season > last_season)
-  new_gms   <- bind_rows(remainder, future) %>%
+  new_gms   <- bind_rows(remainder, future) |>
     arrange(season, week, as.Date(gameday), game_id)
 
   if (nrow(new_gms) == 0) {
@@ -89,19 +88,19 @@ compute_elo_data <- function(
   }
 
   # seed from end-of-week snapshot
-  finals <- elo_hist %>%
+  finals <- elo_hist |>
     filter(season < last_season |
-             (season == last_season & week <= last_week)) %>%
-    transmute(season, week, team = home_team, elo = home_elo_post) %>%
+             (season == last_season & week <= last_week)) |>
+    transmute(season, week, team = home_team, elo = home_elo_post) |>
     bind_rows(
-      elo_hist %>%
+      elo_hist |>
         filter(season < last_season |
-                 (season == last_season & week <= last_week)) %>%
+                 (season == last_season & week <= last_week)) |>
         transmute(season, week, team = away_team, elo = away_elo_post)
-    ) %>%
-    arrange(season, week) %>%
-    group_by(team) %>%
-    slice_tail(n = 1) %>%
+    ) |>
+    arrange(season, week) |>
+    group_by(team) |>
+    slice_tail(n = 1) |>
     ungroup()
 
   all_teams  <- unique(c(game_df$home_team, game_df$away_team))
@@ -130,7 +129,7 @@ compute_elo_data <- function(
     }
     message("Computing Elo for Season ", ss,
             if (ss == last_season) " (remainder)" else " (new)")
-    games_ss <- new_gms %>% filter(season == ss)
+    games_ss <- new_gms |> filter(season == ss)
 
     res <- calc_elo_ratings(
       games                  = games_ss,

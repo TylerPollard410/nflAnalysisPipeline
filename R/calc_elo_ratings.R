@@ -26,11 +26,10 @@ calc_elo_ratings <- function(
     d                      = 400,
     apply_margin_multiplier = TRUE
 ) {
-  library(dplyr)
 
   # 1) order & filter
-  games <- games %>%
-    arrange(season, week, as.Date(gameday), game_id) %>%
+  games <- games |>
+    arrange(season, week, as.Date(gameday), game_id) |>
     filter(!is.na(home_score), !is.na(away_score))
 
   # 2) init ratings
@@ -44,9 +43,9 @@ calc_elo_ratings <- function(
   }
 
   # 3) prepare output
-  hist <- games %>%
+  hist <- games |>
     select(game_id, season, week, gameday,
-           home_team, away_team, home_score, away_score, location) %>%
+           home_team, away_team, home_score, away_score, location) |>
     mutate(home_elo_pre  = NA_real_,
            away_elo_pre  = NA_real_,
            home_elo_post = NA_real_,

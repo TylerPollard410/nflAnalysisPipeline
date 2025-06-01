@@ -21,7 +21,6 @@
 calc_epa_ratings <- function(pbp_df = pbp_data,
                      side = c("offense", "defense"),
                      scaled_wp = FALSE) {
-  require(dplyr)
 
   side <- match.arg(side)
   team_col <- if (side == "offense") "posteam" else "defteam"

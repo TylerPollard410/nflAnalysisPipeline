@@ -176,13 +176,13 @@ clean_teamopponent <- function(df,
 #' @noRd
 add_week_seq <- function(df) {
   # 1) Extract distinct season/week combinations, sorted
-  weeks_tbl <- df %>%
-    dplyr::distinct(season, week) %>%
-    dplyr::arrange(season, week) %>%
+  weeks_tbl <- df |>
+    dplyr::distinct(season, week) |>
+    dplyr::arrange(season, week) |>
     dplyr::mutate(week_seq = dplyr::row_number())
 
   # 2) Join back onto the original data frame
-  df %>%
+  df |>
     dplyr::left_join(weeks_tbl, by = c("season", "week")) |>
     dplyr::relocate(week_seq, .after = week)
 }

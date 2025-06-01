@@ -21,10 +21,10 @@ library(glue)
 library(slider)
 
 # 1. Load all R/ functions
-if (interactive()) {
-  if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-  devtools::load_all()
-}
+# if (interactive()) {
+#   if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+#   devtools::load_all()
+# }
 
 # 2. Create artifacts/data and artifacts/data/models if they don't exist
 dir.create("artifacts/data", recursive = TRUE, showWarnings = FALSE)

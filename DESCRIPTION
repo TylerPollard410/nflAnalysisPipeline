@@ -3,34 +3,29 @@ Title: NFL Analytics Private ETL & Modeling Pipeline
 Version: 0.1.0
 Authors@R: 
     person("Tyler", "Pollard", , "tylerpollard410@gmail.com", role = c("aut", "cre"))
-Description: >
-    Private R package containing feature engineering, model fitting, and data generation
-    routines for NFL analytics. Outputs are pushed nightly to the public golem app repo.
+Description: > Private R package containing feature engineering, model
+    fitting, and data generation routines for NFL analytics. Outputs are
+    pushed nightly to the public golem app repo.
 License: MIT + file LICENSE
 URL: https://github.com/TylerPollard410/nflAnalysisPipeline.git
-BugReports: https://github.com/TylerPollard410/nflAnalysisPipeline.git/issues
+BugReports: 
+    https://github.com/TylerPollard410/nflAnalysisPipeline.git/issues
+Imports:
+    dplyr,
+    future,
+    nflfastR (>= 5.1.0.9000),
+    nflreadr (>= 1.4.1.07),
+    nflseedR (>= 2.0.0.9000),
+    progressr,
+    slider,
+    stats,
+    tidyr,
+    tidyselect
+Suggests:
+    tibble
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-Imports:
-    dplyr,
-    arrow,
-    readr,
-    qs,
-    tibble,
-    purrr,
-    glue,
-    fs,
-    stringr,
-    tidyr,
-    slider,
-    nflfastR (>= 5.1.0.9000),
-    nflreadr (>= 1.4.1.7),
-    nflseedR (>= 2.0.0.9000)
-Suggests:
-    testthat,
-    rstan,
-    brms
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

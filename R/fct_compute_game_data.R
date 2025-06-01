@@ -12,7 +12,7 @@
 #' @export
 #' @noRd
 compute_game_data <- function(seasons = 2006:most_recent_season()) {
-  games <- load_schedules(seasons = TRUE)      # load schedule for specified seasons
+  games <- nflreadr::load_schedules(seasons = TRUE)      # load schedule for specified seasons
   games |>
     dplyr::filter(season >= min(seasons)) |>       # ensure only seasons at or after the minimum
     dplyr::mutate(

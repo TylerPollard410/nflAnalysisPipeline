@@ -8,6 +8,8 @@
 #' @param seasons Integer vector of seasons to include (default: 2006 through most_recent_season()).
 #' @return A tibble of game schedules for the specified seasons, with: clean team abbreviations, betting probabilities,
 #'         cover flags for spread and total, game winner, and time-of-day classification.
+#' @export
+#' @noRd
 compute_game_data <- function(seasons = 2006:most_recent_season()) {
   load_schedules(seasons = TRUE) |>      # load schedule for specified seasons
     filter(season >= min(seasons)) |>       # ensure only seasons at or after the minimum

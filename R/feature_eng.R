@@ -12,15 +12,16 @@
 #' @return Data frame with new columns `<col>_cum`
 #' @importFrom dplyr group_by arrange mutate across all_of cummean ungroup
 #' @export
+#' @noRd
 add_cumulative_avg <- function(df, cols, group_vars, keep = "all") {
-  df |> 
-    group_by(across(all_of(group_vars))) |> 
-    arrange(season, week, game_id, 
-            .by_group = TRUE) |> 
+  df |>
+    group_by(across(all_of(group_vars))) |>
+    arrange(season, week, game_id,
+            .by_group = TRUE) |>
     mutate(across(all_of(cols),
                   ~cummean(.x),
                   .names = "{.col}_cum"),
-           .keep = keep) |> 
+           .keep = keep) |>
     ungroup()
 }
 
@@ -34,17 +35,18 @@ add_cumulative_avg <- function(df, cols, group_vars, keep = "all") {
 #' @importFrom dplyr group_by arrange mutate across all_of ungroup
 #' @importFrom slider slide_dbl
 #' @export
+#' @noRd
 add_rolling_avg <- function(df, cols, group_vars, window = 5, keep = "all") {
-  df |> 
-    group_by(across(all_of(group_vars))) |> 
-    arrange(season, week, game_id, 
-            .by_group = TRUE) |> 
+  df |>
+    group_by(across(all_of(group_vars))) |>
+    arrange(season, week, game_id,
+            .by_group = TRUE) |>
     mutate(across(all_of(cols),
-                  ~slider::slide_dbl(.x, mean, 
-                                     .before = window - 1, 
+                  ~slider::slide_dbl(.x, mean,
+                                     .before = window - 1,
                                      .complete = FALSE),
                   .names = "{.col}_roll"),
-           .keep = keep) |> 
+           .keep = keep) |>
     ungroup()
 }
 
@@ -58,16 +60,17 @@ add_rolling_avg <- function(df, cols, group_vars, window = 5, keep = "all") {
 #' @importFrom dplyr group_by arrange mutate across all_of ungroup
 #' @importFrom stats filter
 #' @export
+#' @noRd
 add_ewma <- function(df, cols, group_vars, span = 5, keep = "all") {
   alpha <- 2 / (span + 1)
-  df |> 
-    group_by(across(all_of(group_vars))) |> 
-    arrange(season, week, game_id, 
-            .by_group = TRUE) |> 
+  df |>
+    group_by(across(all_of(group_vars))) |>
+    arrange(season, week, game_id,
+            .by_group = TRUE) |>
     mutate(across(all_of(cols),
                   ~stats::filter(.x, alpha, method = "recursive"),
                   .names = "{.col}_ewma"),
-           .keep = keep) |> 
+           .keep = keep) |>
     ungroup()
 }
 
@@ -81,15 +84,16 @@ add_ewma <- function(df, cols, group_vars, span = 5, keep = "all") {
 #' @return Data frame with new columns `<col>_lag`
 #' @importFrom dplyr group_by arrange mutate across all_of lag ungroup
 #' @export
+#' @noRd
 add_lag <- function(df, cols, group_vars, n = 1, default = 0, suffix = "_lag", keep = "all") {
-  df |> 
-    group_by(across(all_of(group_vars))) |> 
+  df |>
+    group_by(across(all_of(group_vars))) |>
     arrange(season, week, game_id,
-            .by_group = TRUE) |> 
+            .by_group = TRUE) |>
     mutate(across(all_of(cols),
                   ~lag(.x, n = n, default = default),
                   .names = "{.col}{suffix}"),
-           .keep = keep) |> 
+           .keep = keep) |>
     ungroup()
 }
 
@@ -101,6 +105,7 @@ add_lag <- function(df, cols, group_vars, n = 1, default = 0, suffix = "_lag", k
 #' @param net_suffix Suffix for the net columns (default "_net")
 #' @return Data frame with new columns `<off_col>_net`
 #' @export
+#' @noRd
 add_net_metric <- function(df, off_cols, def_cols, net_suffix = "_net") {
   if (length(off_cols) != length(def_cols)) {
     stop("off_cols and def_cols must be the same length")

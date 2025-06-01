@@ -1,7 +1,7 @@
 ^nflAnalysisPipeline\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-
+^app-dev/
 ^data-raw$
 ^tests$
 ^inst/extdata$

@@ -7,6 +7,8 @@
 #'
 #' @param seasons Integer vector of seasons to load (defaults to 2006 through most_recent_season())
 #' @return A tibble of play-by-play data, with the usual nflverse timestamp attribute
+#' @export
+#' @noRd
 compute_pbp_data <- function(seasons = 2006:most_recent_season()) {
   # ensure parallel backend is set
   future::plan("multisession")

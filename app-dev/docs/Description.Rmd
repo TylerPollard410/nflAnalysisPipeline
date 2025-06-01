@@ -1,0 +1,110 @@
+---
+output: html_document
+---
+
+<!-- # **Purpose** -->
+
+<!-- <div style="margin-top: 25px;"></div> -->
+
+<!-- This shiny dashboard explores data on the **National Football League (NFL)** since 2006 sourced from the [`nflverse`](https://nflverse.nflverse.com/) and it's packages. -->
+<!-- This shiny dashboard explores data on **National Football League (NFL)** games from 2006 to 2020 and fits three statistical models to predict the total score of games. The models can then be used, along with user input of predictor values, to predict the total score of a particular game. Based on the predicted total points, the user will know if the expected point total is going to be over or under the total point line established for that game. The [data](http://www.habitatring.com/games.csv) provides information about each game like identifcation parameters, game conditions, game results, and pregame lines (expected results of the game scores) with corresponding odds. For more information about the dataset and a data dictionary of the column variables visit [NFL Game data information](https://github.com/nflverse/nfldata/blob/master/DATASETS.md#games). -->
+
+<!-- <hr style="border-top: 3px double #bbb; margin-top: 40px; margin-bottom: 20px;"> -->
+
+# **Data**
+
+<div style="margin-top: 25px;"></div>
+
+## <i class="fas fa-list-ol"></i> Standings
+✅  *FULLY ACTIVE and maintained*
+
+Explore detailed NFL standings for each conference and division, including key team performance metrics like points scored, points allowed, margin of victory (MOV), strength of schedule (SOS), and Simple Rating System (SRS). Playoff standings highlight seeding and playoff qualification probabilities, providing a comprehensive snapshot of the current NFL season landscape.
+
+---
+
+## <i class="fas fa-football-ball"></i> Scores
+📝  *PLANNED - Coming soon!*
+
+---
+
+## <i class="fas fa-users"></i> Team Statistics
+
+<div style="margin-left: 20px;">
+
+### Offense
+📝  *PLANNED - Coming soon!*
+<!-- #### Overview  -->
+<!-- #### Passing -->
+<!-- #### Rushing -->
+<!-- #### Conversions -->
+<!-- #### Drive Averages -->
+
+### Defense
+📝  *PLANNED - Coming soon!*
+<!-- #### Overview -->
+<!-- #### Passing -->
+<!-- #### Rushing -->
+<!-- #### Conversions -->
+<!-- #### Drive Averages -->
+<!-- #### Against Position -->
+
+### Special Teams
+📝  *PLANNED - Coming soon!*
+<!-- #### Kick/Punt Returns -->
+<!-- #### Kicking -->
+<!-- #### Punting -->
+
+### Scoring
+📝  *PLANNED - Coming soon!*
+<!-- #### Scoring For -->
+<!-- #### Scoring Against -->
+
+</div>
+
+---
+
+## <i class="fas fa-user"></i> Player Statistics
+
+<div style="margin-left: 20px;">
+
+### Offense
+🛠  *FUNCTIONAL - actively evolving.*
+
+- **Passing** ✅: Explore detailed passing performance data including completion percentages, yards per game, touchdowns, interceptions, sacks, and QB ratings.
+- **Rushing** 📝: *Coming soon.*
+- **Receiving** 📝: *Coming soon.*
+- **Overview** 📝: *Coming soon.*
+
+### Defense
+📝  *PLANNED - Coming soon!*
+
+### Special Teams
+📝  *PLANNED - Coming soon!*
+
+### Scoring
+📝  *PLANNED - Coming soon!*
+
+### Fantasy
+📝  *PLANNED - Coming soon!*
+
+</div>
+<hr style="border-top: 3px double #bbb; margin-top: 40px; margin-bottom: 20px;">
+
+# **Betting**
+
+<div style="margin-top: 25px;"></div>
+
+## <i class="fas fa-dollar-sign"></i> Games
+🚧  *UNDER CONSTRUCTION — features and content coming soon!*
+
+---
+
+## <i class="fas fa-user-clock"></i> Player Props
+📝  *PLANNED - Coming soon!*
+
+---
+
+## <i class="fas fa-chart-line"></i> Plot
+🛠  *FUNCTIONAL - actively evolving.*
+
+Interactively explore relationships between team or game-level variables through customizable plots. Adjust seasons, data filters, plot dimensions, and statistical methods like smoothing lines to uncover insights from NFL data. This flexible visualization tool helps you quickly identify trends, patterns, and anomalies across seasons, teams, and game results.

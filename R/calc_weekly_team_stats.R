@@ -9,6 +9,8 @@
 #' @param stats_loc     File path to save/load nflStatsWeek (e.g. ".../nflStatsWeek.rda")
 #' @param recompute_all Logical, if TRUE forces full recalculation even if saved file exists (default FALSE)
 #' @return Tibble of weekly team stats (nflStatsWeek)
+#' @export
+#' @noRd
 calc_weekly_team_stats <- function(seasons = all_seasons,
                                    sum_level = "week",
                                    stat_level = "team",

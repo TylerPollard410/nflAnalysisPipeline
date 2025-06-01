@@ -16,15 +16,17 @@
 #'   off_penalty_plays, off_penalty_epa_sum, off_penalty_epa_mean,
 #'   off_kick_plays, off_kick_epa_sum, off_kick_epa_mean,
 #'   off_special_plays, off_special_epa_sum, off_special_epa_mean
+#' @export
+#' @noRd
 calc_epa_ratings <- function(pbp_df = pbp_data,
                      side = c("offense", "defense"),
                      scaled_wp = FALSE) {
   require(dplyr)
-  
+
   side <- match.arg(side)
   team_col <- if (side == "offense") "posteam" else "defteam"
   prefix   <- if (side == "offense") "off_" else "def_"
-  
+
   # Precompute flags and scaled/raw EPA once
   pbp <- pbp_df |>
     filter(!is.na(epa), !is.na(ep), !is.na(.data[[team_col]])) |>
@@ -42,7 +44,7 @@ calc_epa_ratings <- function(pbp_df = pbp_data,
         epa
       }
     )
-  
+
   # Summarise per game-team
   result <- pbp |>
     group_by(game_id, season, week,
@@ -79,7 +81,7 @@ calc_epa_ratings <- function(pbp_df = pbp_data,
                 .cols = -c(game_id, season, week, team, home_team, away_team)) |>
     # Replace NaN with 0
     mutate(across(starts_with(prefix), ~ ifelse(is.nan(.x), 0, .x)))
-  
+
   return(result)
 }
 

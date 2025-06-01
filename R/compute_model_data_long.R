@@ -4,35 +4,36 @@
 # Assemble final modeling dataset (“model_data_long”)
 # ----------------------------------------
 #
-# This function expects:
-#   • game_data_long   : a data frame (one row per team‐game)
-#   • elo_data         : Elo feature table
-#   • srs_data         : SRS feature table
-#   • epa_data         : EPA feature table
-#   • scores_data      : Scoring feature table
-#   • series_data      : Series conversion feature table
-#   • turnover_data    : Turnover feature table
-#   • redzone_data     : Redzone feature table
-#   • window, span     : numeric parameters for rolling/EWMA
-#
-# It returns a single data frame, with all engineered features joined
-# onto `game_data_long` in the specified order. Nothing is sourced or loaded
-# inside this function—the caller must ensure all inputs and helper functions
-# are already in the environment.
-#
-# @param game_data_long  Data frame: one row per team‐game (base for features)
-# @param elo_data        Data frame: Elo ratings (wide form)
-# @param srs_data        Data frame: SRS ratings (season, week, team, metrics)
-# @param epa_data        Data frame: raw EPA metrics (must include `off_` & `def_` prefixes)
-# @param scores_data     Data frame: scoring metrics (team‐level)
-# @param series_data     Data frame: series conversion rates (team‐level)
-# @param turnover_data   Data frame: turnover counts (team‐level)
-# @param redzone_data    Data frame: red zone stats (team‐level)
-# @param window          Integer: window size for rolling averages (default = 5)
-# @param span            Numeric: span parameter for EWMA (default = 5)
-# @return A tibble with one row per team‐game and all engineered features.
-# @importFrom dplyr left_join
-# @export
+#' This function expects:
+#'   • game_data_long   : a data frame (one row per team‐game)
+#'   • elo_data         : Elo feature table
+#'   • srs_data         : SRS feature table
+#'   • epa_data         : EPA feature table
+#'   • scores_data      : Scoring feature table
+#'   • series_data      : Series conversion feature table
+#'   • turnover_data    : Turnover feature table
+#'   • redzone_data     : Redzone feature table
+#'   • window, span     : numeric parameters for rolling/EWMA
+#'
+#' It returns a single data frame, with all engineered features joined
+#' onto `game_data_long` in the specified order. Nothing is sourced or loaded
+#' inside this function—the caller must ensure all inputs and helper functions
+#' are already in the environment.
+#'
+#' @param game_data_long  Data frame: one row per team‐game (base for features)
+#' @param elo_data        Data frame: Elo ratings (wide form)
+#' @param srs_data        Data frame: SRS ratings (season, week, team, metrics)
+#' @param epa_data        Data frame: raw EPA metrics (must include `off_` & `def_` prefixes)
+#' @param scores_data     Data frame: scoring metrics (team‐level)
+#' @param series_data     Data frame: series conversion rates (team‐level)
+#' @param turnover_data   Data frame: turnover counts (team‐level)
+#' @param redzone_data    Data frame: red zone stats (team‐level)
+#' @param window          Integer: window size for rolling averages (default = 5)
+#' @param span            Numeric: span parameter for EWMA (default = 5)
+#' @return A tibble with one row per team‐game and all engineered features.
+#' @importFrom dplyr left_join
+#' @export
+#' @noRd
 compute_model_data_long <- function(#game_long_df,
                                     # elo_df,
                                     # srs_df,

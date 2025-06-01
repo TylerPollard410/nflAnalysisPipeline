@@ -10,7 +10,8 @@
 #' @param max_iter   Maximum iterations for convergence (default 100)
 #' @param reset      TRUE (by season), FALSE (last 20 weeks rolling), or integer N (rolling window)
 #' @return Tibble with all summary fields plus MOV, SOS, SRS, OSRS, DSRS, and week
-#' Wrapper to update weeely standings with caching
+#' @export
+#' @noRd
 compute_weekly_standings_data <- function(game_df,
                                          tol = 1e-3,
                                          max_iter = 100,
@@ -89,30 +90,30 @@ compute_weekly_standings_data <- function(game_df,
 #' compute_weekly_standings <- function(game_df, tol = 1e-3, max_iter = 100, reset = TRUE, ...) {
 #'   # Only keep games with non-missing result, once
 #'   valid_games <- game_df |> filter(!is.na(result))
-#'   
+#'
 #'   # build the grid of season/weeks
 #'   weekGrid <- valid_games |>
 #'     distinct(season, week) |>
 #'     arrange(season, week)
-#'   
+#'
 #'   results <- vector("list", nrow(weekGrid))
-#'   
+#'
 #'   for (i in seq_len(nrow(weekGrid))) {
 #'     s <- weekGrid$season[i]
 #'     w <- weekGrid$week[i]
 #'     cat(sprintf("Computing Season %s Week %s...\n", s, w))
-#'     
+#'
 #'     # slice up to that week
 #'     slice_df <- if (reset) {
 #'       valid_games |> filter(season == s, week <= w)
 #'     } else {
 #'       valid_games |> filter((season < s) | (season == s & week <= w))
 #'     }
-#'     
+#'
 #'     # Hand-calculate summary fields for ALL games so far this season
 #'     long_df <- clean_homeaway(slice_df, invert = c("result", "spread_line"))
-#'     base_w <- long_df |> 
-#'       group_by(team) |> 
+#'     base_w <- long_df |>
+#'       group_by(team) |>
 #'       summarise(
 #'         games   = n(),
 #'         wins    = sum(result > 0),
@@ -126,7 +127,7 @@ compute_weekly_standings_data <- function(game_df,
 #'         # You can add division/conference % if you add those fields to long_df
 #'         .groups = "drop"
 #'       )
-#'     
+#'
 #'     ratings <- compute_ratings(
 #'       df           = long_df,
 #'       season_year  = s,
@@ -135,14 +136,14 @@ compute_weekly_standings_data <- function(game_df,
 #'       print_message = FALSE,
 #'       ...
 #'     )
-#'     
+#'
 #'     results[[i]] <- base_w |>
 #'       left_join(ratings, by = "team") |>
 #'       mutate(week = w, season = s)
 #'   }
 #'   bind_rows(results)
 #' }
-#' 
+#'
 #' #' Wrapper to update weekly standings with caching
 #' update_weekly_standings <- function(
     #'     game_df,
@@ -199,11 +200,11 @@ compute_weekly_standings_data <- function(game_df,
 #   )
 # }
 #
-# seasonWeekStandings |> 
-# filter(season %in% 2023:2024) |> 
-#   group_by(season, week) |> 
+# seasonWeekStandings |>
+# filter(season %in% 2023:2024) |>
+#   group_by(season, week) |>
 #   summarise(
-#     across(c(MOV, SOS, SRS, OSRS, DSRS), 
+#     across(c(MOV, SOS, SRS, OSRS, DSRS),
 #            ~round(mean(.x), digits = 4))
-#     ) |> 
+#     ) |>
 #   print(n = 50)

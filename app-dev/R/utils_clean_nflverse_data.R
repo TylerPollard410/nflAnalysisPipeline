@@ -45,7 +45,6 @@
 #' @importFrom dplyr across all_of select
 #' @importFrom tidyr pivot_wider
 #' @export
-#' @noRd
 clean_teamopponent <- function(df,
                                game_id        = "game_id",
                                location       = "location",
@@ -62,10 +61,10 @@ clean_teamopponent <- function(df,
   }
   # Preserve original attributes for later
   original_attrs <- attributes(df)
-
+  
   # 2) Standardize location to lowercase
   df[[location]] <- tolower(as.character(df[[location]]))
-
+  
   # 3) Ensure that each game_id has exactly two rows
   counts_per_game <- table(df[[game_id]])
   if (any(counts_per_game != 2)) {
@@ -74,7 +73,7 @@ clean_teamopponent <- function(df,
       "Found counts: ", paste(names(counts_per_game), counts_per_game, collapse = ", ")
     )
   }
-
+  
   # 4) Check that after lowercasing, each location is one of "home", "away", "neutral"
   valid_locs <- c("home", "away", "neutral")
   if (!all(df[[location]] %in% valid_locs)) {
@@ -84,10 +83,10 @@ clean_teamopponent <- function(df,
       ". Must be one of: ", paste(valid_locs, collapse = ", "), "."
     )
   }
-
+  
   # 5) For each game_id, if both rows are "neutral", arbitrarily assign first → home, second → away
-  df <- df |>
-    dplyr::group_by(dplyr::across(dplyr::all_of(game_id))) |>
+  df <- df |> 
+    dplyr::group_by(dplyr::across(dplyr::all_of(game_id))) |> 
     dplyr::mutate(
       # If both rows have location == "neutral", convert them to home/away in order
       location2 = ifelse(
@@ -95,16 +94,16 @@ clean_teamopponent <- function(df,
         c("home", "away"),
         location  # otherwise keep original "home" or "away"
       )
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::select(-dplyr::all_of(location)) |>
+    ) |> 
+    dplyr::ungroup() |> 
+    dplyr::select(-dplyr::all_of(location)) |> 
     dplyr::rename(!!location := location2)
-
+  
   # 6) Identify the “value” columns to pivot
   pivot_cols <- setdiff(names(df), c(game_id, location))
-
+  
   # 7) Perform the pivot to wide form
-  wide_df <- df |>
+  wide_df <- df |> 
     tidyr::pivot_wider(
       id_cols     = {{game_id}},
       names_from   = tidyselect::all_of(location),
@@ -112,7 +111,7 @@ clean_teamopponent <- function(df,
       values_from  = tidyselect::all_of(pivot_cols),
       values_fill  = list(.default = NA)
     )
-
+  
   # 8) Optionally drop home_opponent / away_opponent if they exist
   if (remove_opponent) {
     drop_cols <- c("home_opponent", "away_opponent")
@@ -121,26 +120,26 @@ clean_teamopponent <- function(df,
       wide_df <- dplyr::select(wide_df, -dplyr::all_of(drop_cols))
     }
   }
-
+  
   # 9) Restore original classes/attributes (other than column names, which have changed)
   #    We need to keep attributes like “nflverse_type” if present.
   core_attrs <- attributes(wide_df)[c("names", "row.names", ".internal.selfref")]
   new_attrs  <- original_attrs[setdiff(names(original_attrs), c("names", "row.names", ".internal.selfref"))]
   attributes(wide_df) <- c(core_attrs, new_attrs)
-
+  
   # 10) If there was an nflverse_type attribute, append "by game" to it
   if ("nflverse_type" %in% names(attributes(wide_df))) {
     attr(wide_df, "nflverse_type") <- paste(attr(wide_df, "nflverse_type"), "by game")
   }
-
+  
   wide_df
 }
 
 
 #' Add a Consecutive Week Sequence Across Seasons
 #'
-#' Given a data frame that contains `season` and `week` columns (e.g., `game_data` or
-#' `game_data_long`), this function computes a sequential integer index (`week_seq`)
+#' Given a data frame that contains `season` and `week` columns (e.g., `game_data` or 
+#' `game_data_long`), this function computes a sequential integer index (`week_seq`) 
 #' that increases by one for each distinct (season, week) pair in ascending order.
 #' All rows sharing the same season/week receive the same `week_seq`.
 #'
@@ -173,14 +172,13 @@ clean_teamopponent <- function(df,
 #'
 #' @importFrom dplyr distinct arrange mutate left_join row_number
 #' @export
-#' @noRd
 add_week_seq <- function(df) {
   # 1) Extract distinct season/week combinations, sorted
   weeks_tbl <- df %>%
     dplyr::distinct(season, week) %>%
     dplyr::arrange(season, week) %>%
     dplyr::mutate(week_seq = dplyr::row_number())
-
+  
   # 2) Join back onto the original data frame
   df %>%
     dplyr::left_join(weeks_tbl, by = c("season", "week")) |>

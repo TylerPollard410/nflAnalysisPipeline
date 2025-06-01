@@ -7,13 +7,15 @@
 #'
 #' @param game_df A tibble of game-level data as returned by compute_game_data()
 #' @return A tibble of gameDataLong with one row per team-game, including cumulative and lagged metrics
+#' @export
+#' @noRd
 compute_game_data_long <- function(game_df = game_data) {
   gameDataLong <- game_df |>
     clean_homeaway(invert = c("result", "spread_line")) |>
     group_by(season, team) |>
     mutate(
       team_GP = row_number(),
-      winner = ifelse(team == winner, TRUE, 
+      winner = ifelse(team == winner, TRUE,
                       ifelse(opponent == winner, FALSE, NA)),
       team_W = cumsum(result > 0),
       team_L = cumsum(result < 0),
@@ -32,7 +34,7 @@ compute_game_data_long <- function(game_df = game_data) {
     group_by(game_id) |>
     mutate(locationID = row_number(), .after = location) |>
     ungroup()
-  
+
   return(gameDataLong)
 }
 

@@ -16,6 +16,8 @@
 #'   \item{elo_history}{Data frame of pre- and post-game ratings for each game}
 #'   \item{final_ratings}{Named vector of final team ratings after all games}
 #'   \item{team_ratings}{Data frame of end-of-week ratings snapshots with season and week}
+#' @export
+#' @noRd
 calc_elo_ratings <- function(
     games,
     initial_elo            = 1500,
@@ -25,12 +27,12 @@ calc_elo_ratings <- function(
     apply_margin_multiplier = TRUE
 ) {
   library(dplyr)
-  
+
   # 1) order & filter
   games <- games %>%
     arrange(season, week, as.Date(gameday), game_id) %>%
     filter(!is.na(home_score), !is.na(away_score))
-  
+
   # 2) init ratings
   teams <- unique(c(games$home_team, games$away_team))
   if (length(initial_elo)==1) {
@@ -40,7 +42,7 @@ calc_elo_ratings <- function(
       stop("initial_elo must be a named, named vector")
     ratings <- initial_elo[teams]
   }
-  
+
   # 3) prepare output
   hist <- games %>%
     select(game_id, season, week, gameday,
@@ -50,45 +52,45 @@ calc_elo_ratings <- function(
            home_elo_post = NA_real_,
            away_elo_post = NA_real_)
   snaps <- tibble()
-  
+
   # 4) loop
   for (i in seq_len(nrow(games))) {
     g <- games[i,]
-    
+
     # sanity: must have seeds for both teams
     missing <- setdiff(c(g$home_team, g$away_team), names(ratings))
     if (length(missing)>0) {
       stop("No seed for teams: ", paste(missing, collapse=", "))
     }
-    
+
     is_home <- ifelse(g$location=="Home", 1, 0)
     hfa_adj <- home_advantage * is_home
-    
+
     he <- ratings[g$home_team]
     ae <- ratings[g$away_team]
     hist$home_elo_pre[i] <- he
     hist$away_elo_pre[i] <- ae
-    
+
     exp_h <- 1/(1 + 10^((ae - (he+hfa_adj))/d))
     if      (g$home_score>g$away_score) { sh<-1; sa<-0 }
     else if (g$home_score<g$away_score) { sh<-0; sa<-1 }
     else                                { sh<-0.5; sa<-0.5 }
-    
+
     mult <- 1
     if (apply_margin_multiplier && g$home_score!=g$away_score) {
       m    <- abs(g$home_score - g$away_score)
       diff <- abs(he - ae + hfa_adj)
       mult <- log(m+1)*(2.2/((diff*0.001)+2.2))
     }
-    
+
     nh <- he + K*mult*(sh - exp_h)
     na <- ae + K*mult*(sa - (1 - exp_h))
     ratings[g$home_team] <- nh
     ratings[g$away_team] <- na
-    
+
     hist$home_elo_post[i] <- nh
     hist$away_elo_post[i] <- na
-    
+
     # snapshot at end of week
     next_wk <- if (i < nrow(games)) games$week[i+1] else NA_integer_
     if (is.na(next_wk) || games$week[i] != next_wk) {
@@ -102,7 +104,7 @@ calc_elo_ratings <- function(
       message("Finished ELO for Season ", g$season, " Week ", g$week)
     }
   }
-  
+
   list(
     elo_history   = hist,
     final_ratings = ratings,

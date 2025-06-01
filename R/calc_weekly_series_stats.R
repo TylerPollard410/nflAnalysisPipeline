@@ -9,6 +9,8 @@
 #' @param series_loc   File path to save/load nflSeriesWeek RDA (e.g. ".../nflSeriesWeek.rda")
 #' @param recompute_all Logical, if TRUE forces full recalculation even if saved file exists (default FALSE)
 #' @return Tibble of weekly series conversion rates (nflSeriesWeek)
+#' @export
+#' @noRd
 calc_weekly_series_stats <- function(pbp_df = pbp_data,
                                      series_loc,
                                      recompute_all = FALSE) {
@@ -37,28 +39,6 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
 
   save(nflSeriesWeek, file = series_loc)
   return(nflSeriesWeek)
-}
-
-#' Compute series features for modeling, with optional recompute
-#'
-#' @param gameDataLong Tibble of long-format game-team rows with columns: game_id, season, week, team, opponent
-#' @param pbpData      Play-by-play tibble for series calculation
-#' @param series_loc   File path for nflSeriesWeek RDA
-#' @param recompute_all Logical, if TRUE forces series stats recompute (default FALSE)
-#' @return Tibble with one row per game-team containing series conversion rates
-compute_series_data <- function(gameDataLong, pbpData, series_loc, recompute_all = FALSE) {
-  # uses dplyr
-
-  # STEP 1: Load or generate series conversion rates
-  seriesData <- update_series_data(pbpData, series_loc, recompute_all)
-
-  # STEP 2: Merge with gameDataLong to enforce ordering
-  id_cols <- c("game_id", "season", "week", "team", "opponent")
-  seriesFeatures <- gameDataLong |>
-    select(all_of(id_cols)) |>
-    left_join(seriesData, by = join_by(season, week, team))
-
-  return(seriesFeatures)
 }
 
 # Example usage:

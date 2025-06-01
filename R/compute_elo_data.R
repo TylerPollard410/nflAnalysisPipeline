@@ -12,6 +12,8 @@
 #' @return A list with elements:
 #'   \item{elo_history}{Combined ELO history data frame}
 #'   \item{final_elos}{Named vector or tibble of final season ratings}
+#' @export
+#' @noRd
 compute_elo_data <- function(
     game_df,
     initial_elo            = 1500,
@@ -24,10 +26,10 @@ compute_elo_data <- function(
     season_factor          = 0.6
 ) {
   library(dplyr)
-  
+
   game_df <- game_df %>%
     arrange(season, week, as.Date(gameday), game_id)
-  
+
   if (recompute_all) {
     message("Full Elo recompute requested...")
     do_inc <- FALSE
@@ -38,7 +40,7 @@ compute_elo_data <- function(
     message("Loading cached Elo data from ", cache_file)
     do_inc <- TRUE
   }
-  
+
   if (!do_inc) {
     # full recompute (unchanged)...
     elo_hist  <- tibble()
@@ -65,27 +67,27 @@ compute_elo_data <- function(
     }
     return(elo_hist)
   }
-  
+
   # incremental update
   load(cache_file)    # loads elo_data
   elo_hist <- elo_data
-  
+
   last_season <- max(elo_hist$season)
   last_week   <- max(filter(elo_hist, season == last_season)$week)
   message("Cache covers up through Season ", last_season, " Week ", last_week)
-  
+
   remainder <- game_df %>%
     filter(season == last_season, week > last_week)
   future    <- game_df %>%
     filter(season > last_season)
   new_gms   <- bind_rows(remainder, future) %>%
     arrange(season, week, as.Date(gameday), game_id)
-  
+
   if (nrow(new_gms) == 0) {
     message("No new games to update Elo for.")
     return(elo_hist)
   }
-  
+
   # seed from end-of-week snapshot
   finals <- elo_hist %>%
     filter(season < last_season |
@@ -101,7 +103,7 @@ compute_elo_data <- function(
     group_by(team) %>%
     slice_tail(n = 1) %>%
     ungroup()
-  
+
   all_teams  <- unique(c(game_df$home_team, game_df$away_team))
   mean_final <- mean(finals$elo, na.rm = TRUE)
   ratings    <- setNames(
@@ -115,7 +117,7 @@ compute_elo_data <- function(
           " teams from up through Season ", last_season,
           " Week ", last_week,
           "; mean Elo = ", round(mean(ratings),3))
-  
+
   # now the one-line tweak: update only players who actually played
   elo_out        <- elo_hist
   current_season <- last_season
@@ -129,7 +131,7 @@ compute_elo_data <- function(
     message("Computing Elo for Season ", ss,
             if (ss == last_season) " (remainder)" else " (new)")
     games_ss <- new_gms %>% filter(season == ss)
-    
+
     res <- calc_elo_ratings(
       games                  = games_ss,
       initial_elo            = ratings,
@@ -140,9 +142,9 @@ compute_elo_data <- function(
     )
     # <— update only the teams who played this batch
     ratings[names(res$final_ratings)] <- res$final_ratings
-    
+
     elo_out <- bind_rows(elo_out, res$elo_history)
   }
-  
+
   elo_out
 }

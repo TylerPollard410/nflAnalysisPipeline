@@ -1,24 +1,55 @@
-name: Publish Artifacts
+name: Update Data and Sync to App Repo
 
 on:
   schedule:
-    - cron: '0 7 * * *'   # placeholder schedule (adjust later)
+    - cron: '15 8 * * *'    # Every day at 08:15 UTC (adjust as you like)
   workflow_dispatch:
 
 jobs:
-  build-and-publish:
+  build-and-sync:
     runs-on: ubuntu-latest
 
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout pipeline repo
+        uses: actions/checkout@v4
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
-      - name: Install dependencies
+
+      - name: Install system dependencies
         run: |
-          Rscript -e 'install.packages(c(
-            "devtools", "dplyr", "arrow", "readr", "qs", "rstan", "brms", "fs"
-          ), repos="https://cloud.r-project.org")'
-      - name: Run ETL (placeholder)
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Install R package dependencies
         run: |
-          Rscript data-raw/update_all_data.R
-      # Next steps (checkout public repo, copy artifacts) will be added later
+          Rscript -e 'install.packages(c("devtools", "arrow", "qs", "dplyr", "tibble", "purrr", "nflreadr", "readr", "stringr", "tidyr", "glue", "slider"))'
+          Rscript -e 'devtools::install_deps(dependencies = TRUE)'
+
+      - name: Run ETL pipeline
+        run: Rscript data-raw/update_all_data.R
+
+      - name: Checkout app repo (public, as subfolder)
+        uses: actions/checkout@v4
+        with:
+          repository: tylerpollard410/nflanalysisapp    # <== update if needed
+          ref: main
+          token: ${{ secrets.PUSH_TOKEN }}
+          path: nflanalysisapp
+
+      - name: Sync only .parquet files to app repo data/
+        run: |
+          mkdir -p nflanalysisapp/data
+          rsync -av --include '*/' --include '*.parquet' --exclude '*' artifacts/data/ nflanalysisapp/data/
+
+      - name: Commit and push updated data to app repo
+        working-directory: nflanalysisapp
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/
+          git commit -m "Update data artifacts [skip ci]" || echo "No changes to commit"
+          git push origin main

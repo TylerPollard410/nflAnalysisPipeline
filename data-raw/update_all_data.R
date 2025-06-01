@@ -1,18 +1,19 @@
 # update_all_data.R -- run from pipeline repo root (includes explicit library calls)
 
 # 0. Explicitly load required packages for scripts/functions and CI/CD workflow
+# Libraries -----
 library(devtools)
 library(arrow)
 library(qs)
 library(dplyr)
 library(tibble)
 library(purrr)
-library(nflverse)
+library(nflreadr)
 library(readr)
 library(stringr)
-library(slider)
 library(tidyr)
 library(glue)
+library(slider)
 
 # 1. Load all R/ functions
 devtools::load_all()

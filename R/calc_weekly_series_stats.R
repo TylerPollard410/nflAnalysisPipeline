@@ -25,7 +25,7 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
     # compute only current season
     pbpData_series <- pbp_df |> filter(season == get_current_season())
     nflSeriesWeekTemp <- progressr::with_progress({
-      calculate_series_conversion_rates(pbpData_series, weekly = TRUE)
+      nflfastR::calculate_series_conversion_rates(pbpData_series, weekly = TRUE)
     })
     nflSeriesWeek <- bind_rows(nflSeriesWeek, nflSeriesWeekTemp)
   } else {
@@ -33,7 +33,7 @@ calc_weekly_series_stats <- function(pbp_df = pbp_data,
         "Calculating", min(pbp_df$season), "-", get_current_season(), "season Data")
     # full recalculation
     nflSeriesWeek <- progressr::with_progress({
-      calculate_series_conversion_rates(pbp_df, weekly = TRUE)
+      nflfastR::calculate_series_conversion_rates(pbp_df, weekly = TRUE)
     })
   }
 

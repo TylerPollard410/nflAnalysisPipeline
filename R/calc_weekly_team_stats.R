@@ -28,7 +28,7 @@ calc_weekly_team_stats <- function(seasons = all_seasons,
       filter(season != get_current_season())
 
     temp <- progressr::with_progress({
-      calculate_stats(
+      nflfastR::calculate_stats(
         seasons       = get_current_season(),
         summary_level = sum_level,
         stat_type     = stat_level,
@@ -41,7 +41,7 @@ calc_weekly_team_stats <- function(seasons = all_seasons,
         "Calculating", min(seasons), "-", get_current_season(), "season Data")
     # full recalculation
     nflStatsWeek <- progressr::with_progress({
-      calculate_stats(
+      nflfastR::calculate_stats(
         seasons       = seasons,
         summary_level = sum_level,
         stat_type     = stat_level,

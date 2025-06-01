@@ -38,7 +38,7 @@ jobs:
       - name: Checkout app repo (public, as subfolder)
         uses: actions/checkout@v4
         with:
-          repository: tylerpollard410/nflanalysisapp
+          repository: tylerpollard410/nfl-analysis-app
           ref: main
           token: ${{ secrets.PUSH_TOKEN }}
           path: nflanalysisapp

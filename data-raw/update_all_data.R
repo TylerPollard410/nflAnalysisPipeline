@@ -2,6 +2,10 @@
 
 # 0. Explicitly load required packages for scripts/functions and CI/CD workflow
 # Libraries -----
+#install.packages(".", repos = NULL, type = "source")
+library(nflAnalysisPipeline)
+#ls("package:nflAnalysisPipeline")
+
 library(arrow)
 library(qs)
 library(dplyr)

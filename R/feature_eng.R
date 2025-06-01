@@ -58,7 +58,6 @@ add_rolling_avg <- function(df, cols, group_vars, window = 5, keep = "all") {
 #' @param span Numeric span parameter for EWMA (default 5)
 #' @return Data frame with new columns `<col>_ewma`
 #' @importFrom dplyr group_by arrange mutate across all_of ungroup
-#' @importFrom stats filter
 #' @export
 #' @noRd
 add_ewma <- function(df, cols, group_vars, span = 5, keep = "all") {

@@ -11,7 +11,7 @@ compute_season_standings_data <- function(game_df = game_data, ...) {
     filter(season_type == "REG", !is.na(result))
 
   # Base standings via nflverse
-  base_tbl <- nfl_standings(games = reg_data)
+  base_tbl <- nflseedR::nfl_standings(games = reg_data)
 
   # Prepare long-format game data
   long <- reg_data |>

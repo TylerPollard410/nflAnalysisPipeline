@@ -3,7 +3,7 @@ Title: NFL Analytics Private ETL & Modeling Pipeline
 Version: 0.1.0
 Authors@R: 
     person("Tyler", "Pollard", , "tylerpollard410@gmail.com", role = c("aut", "cre"))
-Description:  >
+Description: >
     Private R package containing feature engineering, model fitting, and data generation
     routines for NFL analytics. Outputs are pushed nightly to the public golem app repo.
 License: MIT + file LICENSE
@@ -27,7 +27,8 @@ Imports:
     slider,
     nflfastR (>= 5.1.0.9000),
     nflreadr (>= 1.4.1.7),
-    nflseedR (>= 2.0.0.9000)
+    nflseedR (>= 2.0.0.9000),
+    shiny
 Suggests:
     testthat,
     rstan,

@@ -2,7 +2,7 @@ name: Update Data and Sync to App Repo
 
 on:
   schedule:
-    - cron: '15 8 * * *'    # Every day at 08:15 UTC (adjust as you like)
+    - cron: '15 8 * * *'    # Every day at 08:15 UTC (adjust as needed)
   workflow_dispatch:
 
 jobs:
@@ -26,8 +26,11 @@ jobs:
 
       - name: Install R package dependencies
         run: |
-          Rscript -e 'install.packages(c("devtools", "arrow", "qs", "dplyr", "tibble", "purrr", "nflreadr", "readr", "stringr", "tidyr", "glue", "slider"))'
-          Rscript -e 'devtools::install_deps(dependencies = TRUE)'
+          Rscript -e 'install.packages(c(
+            "arrow", "qs", "dplyr", "tibble", "purrr", "glue", "fs", "stringr",
+            "tidyr", "slider", "nflfastR", "nflreadr", "nflseedR", "readr"
+          ))'
+          Rscript -e 'install.packages(".", repos = NULL, type = "source")'
 
       - name: Run ETL pipeline
         run: Rscript data-raw/update_all_data.R
@@ -35,7 +38,7 @@ jobs:
       - name: Checkout app repo (public, as subfolder)
         uses: actions/checkout@v4
         with:
-          repository: tylerpollard410/nflanalysisapp    # <== update if needed
+          repository: tylerpollard410/nflanalysisapp
           ref: main
           token: ${{ secrets.PUSH_TOKEN }}
           path: nflanalysisapp

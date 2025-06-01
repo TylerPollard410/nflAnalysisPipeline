@@ -18,13 +18,19 @@ Imports:
     arrow,
     readr,
     qs,
-    rstan,
-    brms,
     tibble,
     purrr,
     glue,
-    fs
+    fs,
+    stringr,
+    tidyr,
+    slider,
+    nflfastR (>= 5.1.0.9000),
+    nflreadr (>= 1.4.1.7),
+    nflseedR (>= 2.0.0.9000)
 Suggests:
-    testthat
+    testthat,
+    rstan,
+    brms
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -27,8 +27,7 @@ Imports:
     slider,
     nflfastR (>= 5.1.0.9000),
     nflreadr (>= 1.4.1.7),
-    nflseedR (>= 2.0.0.9000),
-    shiny
+    nflseedR (>= 2.0.0.9000)
 Suggests:
     testthat,
     rstan,

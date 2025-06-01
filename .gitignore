@@ -11,6 +11,9 @@
 *.log
 .cache/
 
+# Do no track app development
+app-dev/
+
 # Do not track generated artifacts
 artifacts/
 artifacts/data/

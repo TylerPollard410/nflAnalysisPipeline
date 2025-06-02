@@ -65,14 +65,19 @@ process_srs_data <- function(base_df, srs_raw) {
     add_week_seq() |>
     dplyr::arrange(season, week) |>
     # no internal lag; use feature_eng::add_lag after if desired
-    dplyr::select(season, week, week_seq, team, dplyr::all_of(srs_cols)) |>
+    dplyr::select(season, week, week_seq, team, dplyr::all_of(srs_cols)) #|>
+    # dplyr::mutate(
+    #   across(all_of(srs_cols),
+    #          ~lag(.x, n = 1, default = 0)),
+    #   .by = "team"
+    # )
+
+  dplyr::left_join(base_df, srs_feat, by = c("season", "week", "week_seq", "team")) |>
     dplyr::mutate(
       across(all_of(srs_cols),
              ~lag(.x, n = 1, default = 0)),
       .by = "team"
     )
-
-  dplyr::left_join(base_df, srs_feat, by = c("season", "week", "week_seq", "team"))
 }
 
 #' Process EPA data (cumulative, rolling, EWMA, lag, and net vs. opponent)

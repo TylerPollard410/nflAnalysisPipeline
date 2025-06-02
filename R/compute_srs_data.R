@@ -28,6 +28,7 @@ compute_srs_data <- function(game_df,
     rating_cols <- c("MOV", "SOS", "SRS", "OSRS", "DSRS")
     suffixes    <- map_chr(resets, ~ if (identical(.x, TRUE)) "" else paste0("_", .x))
     srs_list    <- map2(resets, suffixes, function(r, suffix) {
+      message("---- Computing ratings for reset mode:   ", r)
       weekly <- calc_weekly_standings(
         df_subset,
         tol      = tol,

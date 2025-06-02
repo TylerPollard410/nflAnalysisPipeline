@@ -34,7 +34,7 @@ calc_weekly_standings <- function(game_df = game_data,
 
   for (i in seq_len(nrow(weekGrid))) {
     s <- weekGrid$season[i]; w <- weekGrid$week[i]
-    cat(sprintf("Computing Season %s Week %s...\n", s, w))
+    #cat(sprintf("Computing Season %s Week %s...", s, w))
 
     if (reset_mode == "season") {
       slice_df <- valid_games |> filter(season == s, week <= w)
@@ -68,9 +68,10 @@ calc_weekly_standings <- function(game_df = game_data,
     ratings <- calc_srs_ratings(
       game_long_df = long_df,
       season_year  = s,
+      season_week  = w,
       tol          = tol,
       max_iter     = max_iter,
-      print_message = FALSE,
+      print_message = TRUE,
       ...
     )
 

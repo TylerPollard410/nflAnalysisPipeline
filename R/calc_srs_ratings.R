@@ -15,11 +15,16 @@
 #' @noRd
 calc_srs_ratings <- function(game_long_df = game_data_long,
                              season_year = get_current_season(),
+                             season_week = NULL,
                              tol = 1e-3,
                              max_iter = 100,
                              print_message = TRUE) {
   if(print_message) {
-    cat("Computing Season", season_year, "...\n")
+    if(is.null(season_week)) {
+      message <- paste("Computing Season", season_year, "...")
+    } else {
+      message <- paste(sprintf("Computing Season %s Week %s...", season_year, season_week))
+    }
   }
 
   # Initial summary of team performance
@@ -90,13 +95,20 @@ calc_srs_ratings <- function(game_long_df = game_data_long,
       na.rm = TRUE
     )
     if (delta < tol) {
-      cat("- Converged after", iter, "iterations.\n")
+      #cat(message, "Converged after", iter, "iterations.\n")
       break
     }
     if (iter >= max_iter) {
-      cat("- Reached maximum iterations =", max_iter, "without full convergence\n")
+      #cat(message, "Reached maximum iterations =", max_iter, "without full convergence\n")
       break
     }
+  }
+
+  if (delta < tol) {
+    cat(message, "Converged after", iter, "iterations.\n")
+  }
+  if (iter >= max_iter) {
+    cat(message, "Reached maximum iterations =", max_iter, "without full convergence\n")
   }
 
   ratings

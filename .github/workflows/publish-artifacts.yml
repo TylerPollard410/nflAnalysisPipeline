@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout pipeline repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2

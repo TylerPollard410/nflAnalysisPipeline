@@ -115,7 +115,8 @@ cat("%%%% Generating srs_data %%%%
 ")
 srs_data <- compute_srs_data(
   game_data,
-  resets = list(TRUE, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20),
+  #resets = list(TRUE, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20),
+  resets = c(TRUE, as.list(5:20)),
   tol = 1e-3,
   max_iter = 200,
   recompute_all = FALSE,

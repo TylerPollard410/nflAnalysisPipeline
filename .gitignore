@@ -15,8 +15,8 @@
 app-dev/
 
 # Do not track generated artifacts
-artifacts/
-artifacts/data/
+#artifacts/
+#artifacts/data/
 artifacts/data/models/
 
 # If data-raw produces temp or output, ignore those

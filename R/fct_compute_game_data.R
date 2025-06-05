@@ -76,7 +76,19 @@ compute_game_data <- function(seasons = 2006:most_recent_season()) {
     relocate(totalCover,        .after = total_line) |>
     relocate(winner,            .after = result) |>
     relocate(time_of_day,       .after = gametime) |>
-    add_week_seq()
+    add_week_seq() |>
+    select(
+      -old_game_id,
+      -gsis,
+      -nfl_detail_id,
+      -pfr,
+      -pff,
+      -espn,
+      -ftn,
+      -away_qb_id,
+      -home_qb_id,
+      -stadium_id
+    )
 }
 
 # # Auto-run when sourced in UpdateData.R ----

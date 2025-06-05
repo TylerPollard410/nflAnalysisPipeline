@@ -41,8 +41,8 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add artifacts/data/
-          git commit -m "Update artifacts/data [skip ci] $(TZ='America/New_York' date '+%Y-%m-%d %H:%M %Z')" || echo "No changes to commit"
+          git add artifacts/data/ artifacts/data-archive/
+          git commit -m "Update artifacts [skip ci] $(TZ='America/New_York' date '+%Y-%m-%d %H:%M %Z')" || echo "No changes to commit"
           git push origin HEAD
 
       - name: Checkout app repo (public, as subfolder)
@@ -56,7 +56,7 @@ jobs:
       - name: Sync only .parquet files to app repo data/
         run: |
           mkdir -p nflanalysisapp/data
-          rsync -av --include '*/' --include '*.parquet' --exclude '*' artifacts/data/ nflanalysisapp/data/
+          rsync -av artifacts/data/ nflanalysisapp/data/
 
       - name: Commit and push updated data to app repo
         working-directory: nflanalysisapp

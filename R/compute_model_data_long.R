@@ -34,26 +34,27 @@
 #' @importFrom dplyr left_join
 #' @export
 #' @noRd
-compute_model_data_long <- function(#game_long_df,
-                                    # elo_df,
-                                    # srs_df,
-                                    # epa_df,
-                                    # scores_df,
-                                    # series_df,
-                                    # turnover_df,
-                                    # redzone_df,
+compute_model_data_long <- function(archive_loc = "artifacts/data-archive/",
                                     window = 5,
                                     span   = 5) {
+  #game_long_df,
+  # elo_df,
+  # srs_df,
+  # epa_df,
+  # scores_df,
+  # series_df,
+  # turnover_df,
+  # redzone_df,) {
 
   game_data <- compute_game_data(seasons = all_seasons)
   game_data_long <- compute_game_data_long(game_df = game_data)
-  load("artifacts/data/elo_data.rda")      # loads object `elo_data`
-  load("artifacts/data/srs_data.rda")      # loads object `srs_data`
-  load("artifacts/data/epa_data.rda")      # loads object `epa_data`
-  load("artifacts/data/scores_data.rda")   # loads object `scores_data`
-  load("artifacts/data/series_data.rda")   # loads object `series_data`
-  load("artifacts/data/turnover_data.rda") # loads object `turnover_data`
-  load("artifacts/data/redzone_data.rda")  # loads object `redzone_data`
+  load(paste0(archive_loc, "elo_data.rda"))      # loads object `elo_data`
+  load(paste0(archive_loc, "srs_data.rda"))      # loads object `srs_data`
+  load(paste0(archive_loc, "epa_data.rda"))      # loads object `epa_data`
+  load(paste0(archive_loc, "scores_data.rda"))   # loads object `scores_data`
+  load(paste0(archive_loc, "series_data.rda"))   # loads object `series_data`
+  load(paste0(archive_loc, "turnover_data.rda")) # loads object `turnover_data`
+  load(paste0(archive_loc, "redzone_data.rda"))  # loads object `redzone_data`
 
   id_cols <- c("game_id", "season", "week", "week_seq", "team", "opponent")
 

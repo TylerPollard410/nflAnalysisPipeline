@@ -40,13 +40,13 @@ id_cols <- c("game_id", "season", "week", "week_seq", "team", "opponent")
 cat("%%%% Generating game_data %%%%
 ")
 game_data <- compute_game_data(seasons = all_seasons)
-arrow::write_parquet(game_data, "artifacts/data/game_data.parquet")
+#arrow::write_parquet(game_data, "artifacts/data/game_data.parquet")
 
 # game_data_long --------
 cat("%%%% Generating game_data_long %%%%
 ")
 game_data_long <- compute_game_data_long(game_df = game_data)
-arrow::write_parquet(game_data_long, "artifacts/data/game_data_long.parquet")
+#arrow::write_parquet(game_data_long, "artifacts/data/game_data_long.parquet")
 
 # pbp_data --------
 cat("%%%% Generating pbp_data %%%%
@@ -62,7 +62,13 @@ player_offense_data <- compute_player_data(
   game_long_df = game_data_long,
   stat = "offense"
 )
-arrow::write_parquet(player_offense_data, "artifacts/data/player_offense_data.parquet")
+arrow::write_dataset(
+  player_offense_data,
+  "artifacts/data/player_offense_data",
+  format = "parquet",
+  partitioning = "season",
+  hive_style = TRUE
+)
 
 # season_standings_data --------
 cat("%%%% Generating season_standings_data %%%%

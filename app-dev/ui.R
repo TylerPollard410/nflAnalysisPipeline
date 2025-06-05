@@ -1,11 +1,7 @@
 ## NFL Analysis App
 ## Tyler Pollard
 ## 8 Aug 2023
-#' @import bs4Dash
-#' @importFrom shinyWidgets virtualSelectInput radioGroupButtons prettyCheckboxGroup noUiSliderInput wNumbFormat
-#'  prepare_choices
-#' @importFrom dplyr select arrange
-#' @importFrom nflreadr load_teams get_current_season get_current_week
+
 # Load Libraries ----
 ## Shiny
 library(shiny)
@@ -13,7 +9,7 @@ library(shiny)
 #library(bslib)
 library(bs4Dash)
 library(shinyWidgets)
-#library(shinycssloaders)
+library(shinycssloaders)
 library(shinyjs)
 library(waiter)
 #library(RColorBrewer)
@@ -26,6 +22,7 @@ library(fresh)
 #library(rvest)
 
 ## Tables ----
+library(arrow)
 #library(DBI)
 #library(RPostgres)
 #library(data.table)
@@ -72,8 +69,10 @@ library(nflverse)
 ## Tidyverse ----
 library(tidyverse)
 
+library(nflAnalysisPipeline)
+
 # Input Filters ----
-teamsDataPickerInput <- load_teams(current = TRUE) |>
+teams_picker_choices <- load_teams(current = TRUE) |>
   select(team_abbr, team_name, team_conf, team_division) |>
   arrange(team_division, team_name) |>
   as.data.frame()
@@ -98,7 +97,7 @@ shinyUI(
   dashboardPage(dark = NULL,
                 footer = dashboardFooter(left = br()),
                 freshTheme = my_theme,
-                preloader = list(html = tagList(spin_1(), "Loading ..."), color = "#3c8dbc"),
+                #preloader = list(html = tagList(spin_1(), "Loading ..."), color = "#3c8dbc"),
 
                 # Dahsboard Header ===============
                 header = dashboardHeader(
@@ -201,13 +200,13 @@ shinyUI(
                 # Dashboard Body ================
                 body = dashboardBody(
 
-                  useShinyjs(),
+                  # useShinyjs(),
                   ## Custon CSS ----
-                  tags$head(
-                    tags$style(HTML("
-                      #teamRankingsTabBox_box .card-body { padding: 0px; }
-                    "))
-                  ),
+                  # tags$head(
+                  #   tags$style(HTML("
+                  #   #teamRankingsTabBox_box .card-body { padding: 0px; }
+                  # "))
+                  # ),
                   tabItems(
                     # Home Tab  ###############################################
                     tabItem(
@@ -216,7 +215,7 @@ shinyUI(
                       # Welcome Jumbotron ----
                       bs4Jumbotron(
                         title = h1("Welcome to the NFL Analysis Dashboard"),
-                        lead = includeMarkdown("./docs/Purpose.Rmd"),
+                        lead = includeMarkdown(("docs/Purpose.Rmd")),
                         #lead = "This dashboard explores historical and current NFL data using powerful visualizations and modeling tools.",
                         status = "primary",
                         btnName = NULL,
@@ -240,67 +239,71 @@ shinyUI(
                           #                 imageOutput("image"))
                           # ),
                           br(),
-                          withMathJax(),
-                          includeMarkdown("./docs/Description.Rmd")
+                          shiny::withMathJax(),
+                          includeMarkdown(("docs/Description.Rmd"))
                       ) # end box
                     ), # close Home tab Item
                     # Data Tab ################################################
                     ## Standings Tab ##########################################
                     tabItem(
                       tabName = "standingsTab",
-                      #fluidPage(
-                      fluidRow(
-                        ##### Inputs ----
-                        ###### Season ----
-                        #column(width = 1,
-                        div(style = "margin-right: 1rem",
-                               virtualSelectInput(
-                                 inputId = "standingsSeason",
-                                 label = "Select season",
-                                 choices = seq(2007, get_current_season()),
-                                 selected = get_current_season()
-                               )
-                        ),
-                        ###### Table Stat ----
-                        #column(width = 2,
-                        div(style = "margin-right: 1rem",
-                               radioGroupButtons(
-                                 inputId = "standingsStat",
-                                 label = "Table Statistic",
-                                 choices = c("Total", "Game"),
-                                 status = "info"
-                               )
-                        ) # end column
-                      ), # end fluidRow
-                      br(),
-                      ##### Season Table ----
-                      fluidRow(
-                        style = "margin-left: -7.5px; margin-right: -7.5px",
-                        column(
-                          width = 6,
-                          style = "padding: 0px",
-                          standingsTableOutput("standingsTableAFC")
-                        ), # end AFC column
-                        column(
-                          width = 6,
-                          style = "padding: 0px",
-                          standingsTableOutput("standingsTableNFC")
-                        ) # end NFC column
-                      ), # end divsion standings row
-                      br(),
-                      ##### Playoffs Table ----
-                      fluidRow(
-                        column(
-                          width = 6,
-                          standingsPlayoffsTableOutput("standingsPlayoffsTableAFC")
-                        ), # end AFC column
-                        column(
-                          width = 6,
-                          standingsPlayoffsTableOutput("standingsPlayoffsTableNFC")
-                        ) # end NFC column
-                      ) # end playoff standings row
-                      #) # end fluidPage
-                    ), # end Standings tabItem
+                      mod_standings_ui("standings")
+                    ),
+                    # tabItem(
+                    #   tabName = "standingsTab",
+                    #   #fluidPage(
+                    #   fluidRow(
+                    #     ##### Inputs ----
+                    #     ###### Season ----
+                    #     #column(width = 1,
+                    #     div(style = "margin-right: 1rem",
+                    #         virtualSelectInput(
+                    #           inputId = "standingsSeason",
+                    #           label = "Select season",
+                    #           choices = seq(2007, get_current_season()),
+                    #           selected = get_current_season()
+                    #         )
+                    #     ),
+                    #     ###### Table Stat ----
+                    #     #column(width = 2,
+                    #     div(style = "margin-right: 1rem",
+                    #         radioGroupButtons(
+                    #           inputId = "standingsStat",
+                    #           label = "Table Statistic",
+                    #           choices = c("Total", "Game"),
+                    #           status = "info"
+                    #         )
+                    #     ) # end column
+                    #   ), # end fluidRow
+                    #   br(),
+                    #   ##### Season Table ----
+                    #   fluidRow(
+                    #     style = "margin-left: -7.5px; margin-right: -7.5px",
+                    #     column(
+                    #       width = 6,
+                    #       style = "padding: 0px",
+                    #       standingsTableOutput("standingsTableAFC")
+                    #     ), # end AFC column
+                    #     column(
+                    #       width = 6,
+                    #       style = "padding: 0px",
+                    #       standingsTableOutput("standingsTableNFC")
+                    #     ) # end NFC column
+                    #   ), # end divsion standings row
+                    #   br(),
+                    #   ##### Playoffs Table ----
+                    #   fluidRow(
+                    #     column(
+                    #       width = 6,
+                    #       standingsPlayoffsTableOutput("standingsPlayoffsTableAFC")
+                    #     ), # end AFC column
+                    #     column(
+                    #       width = 6,
+                    #       standingsPlayoffsTableOutput("standingsPlayoffsTableNFC")
+                    #     ) # end NFC column
+                    #   ) # end playoff standings row
+                    #   #) # end fluidPage
+                    # ), # end Standings tabItem
                     ## Team Tab ###############################################
                     ### Team Rankings ==========================================
                     tabItem(
@@ -309,13 +312,13 @@ shinyUI(
                       #### Inputs ----
                       fluidRow(
                         #column(width = 1,
-                               virtualSelectInput(
-                                 inputId = "teamRankingsSeason",
-                                 #width = "100%",
-                                 label = "Select season",
-                                 choices = seq(2007, get_current_season()),
-                                 selected = get_current_season()
-                               )
+                        virtualSelectInput(
+                          inputId = "teamRankingsSeason",
+                          #width = "100%",
+                          label = "Select season",
+                          choices = seq(2007, get_current_season()),
+                          selected = get_current_season()
+                        )
                         #) #end column
                       ), # end fluidRow
                       br(),
@@ -326,32 +329,32 @@ shinyUI(
                         # tags$style(
                         #   ".col-sm-12 {padding: 0px;}"
                         # ),
-                      tabBox(
-                        id = "teamRankingsTabBox",
-                        type = "pills",
-                        width = 12,
-                        #### Overview ----
-                        tabPanel(
-                          title = "Overview",
-                          value = "teamRankingsOverview",
-                          teamRankingsOverviewUI("team_rank_overview")
-                        ),
-                        #### EPA ----
-                        tabPanel(
-                          title = "EPA",
-                          value = "teamRankingsEpa"
-                        ),
-                        #### ELO ----
-                        tabPanel(
-                          title = "Elo",
-                          value = "teamRankingsElo"
-                        ),
-                        #### SRS ----
-                        tabPanel(
-                          title = "SRS",
-                          value = "teamRankingsSrs"
-                        )
-                      ) # end Team Rankings Tab box
+                        tabBox(
+                          id = "teamRankingsTabBox",
+                          type = "pills",
+                          width = 12,
+                          #### Overview ----
+                          tabPanel(
+                            title = "Overview",
+                            value = "teamRankingsOverview"
+                            #teamRankingsOverviewUI("team_rank_overview")
+                          ),
+                          #### EPA ----
+                          tabPanel(
+                            title = "EPA",
+                            value = "teamRankingsEpa"
+                          ),
+                          #### ELO ----
+                          tabPanel(
+                            title = "Elo",
+                            value = "teamRankingsElo"
+                          ),
+                          #### SRS ----
+                          tabPanel(
+                            title = "SRS",
+                            value = "teamRankingsSrs"
+                          )
+                        ) # end Team Rankings Tab box
                       )
                     ), #end Team Rankings Tab
                     ### Team Scoring ==========================================
@@ -407,13 +410,13 @@ shinyUI(
                                  inputId = "playerOffenseTeam",
                                  label = "Select team to analyze",
                                  choices = prepare_choices(
-                                   .data = teamsDataPickerInput,
+                                   .data = teams_picker_choices,
                                    label = team_name,
                                    value = team_abbr,
                                    group_by = team_division
                                  ),
                                  multiple = TRUE,
-                                 selected = teamsDataPickerInput$team_abbr,
+                                 selected = teams_picker_choices$team_abbr,
                                  showSelectedOptionsFirst = TRUE
                                )
                         ),
@@ -436,8 +439,8 @@ shinyUI(
                         ),
                         #### Passing ----
                         tabPanel(
-                          title = "Passing",
-                          playerOffensePassingTableOutput("playerOffensePassingTable")
+                          title = "Passing"
+                          #playerOffensePassingTableOutput("playerOffensePassingTable")
                         ),
                         #### Rushing ----
                         tabPanel(
@@ -493,10 +496,10 @@ shinyUI(
                           fluidRow(
                             column(
                               width = 12,
-                              withSpinner(
-                                bettingGamesLinesUI("gameLines"),
-                                type = 8
-                              ),
+                              # withSpinner(
+                              #   bettingGamesLinesUI("gameLines"),
+                              #   type = 8
+                              # ),
                               align = "center"
                             )
                           )
@@ -507,9 +510,9 @@ shinyUI(
                           title = "Predictions",
                           br(),
                           h3("Betting Predictions"),
-                          br(),
+                          br()
                           # Game detail header (populated when a game is clicked on the "Lines" tab)
-                          bettingGameDetailUI("gameDetail") # end fluidRow
+                          #bettingGameDetailUI("gameDetail") # end fluidRow
                         ) # end Prediction tabPanel
                       ) # end tabsetPanel
                     ), #end bettingGamesTab
@@ -527,13 +530,13 @@ shinyUI(
                       tabName = "bettingPlotTab",
                       h4("Plot Data"),
                       fluidRow(
-                        column(width = 3,
-                               modDataPlotInputUI("modDataPlotInput",
-                                                  teamsDataPickerInput)
-                        ),
-                        column(width = 9,
-                               modDataPlotOutput("modPlot")
-                        )
+                        # column(width = 3,
+                        #        modDataPlotInputUI("modDataPlotInput",
+                        #                           teams_picker_choices)
+                        # ),
+                        # column(width = 9,
+                        #        modDataPlotOutput("modPlot")
+                        # )
                       )
                     )
                   ) # end tab Items

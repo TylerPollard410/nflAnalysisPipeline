@@ -2,7 +2,8 @@ name: Update Data and Sync to App Repo
 
 on:
   schedule:
-    - cron: '15 8 * * *'    # Every day at 08:15 UTC (adjust as needed)
+    - cron: '0 8 * 8,9,10,11,12 *'    # Every day at 08:00 UTC during sept-dec
+    - cron: '0 8 * 1,2 *'    # Every day at 08:00 UTC during jan-feb
   workflow_dispatch:
 
 jobs:
@@ -29,7 +30,7 @@ jobs:
       - name: Install R package dependencies
         run: |
           Rscript -e 'install.packages(c(
-            "arrow", "qs", "dplyr", "tibble", "purrr", "glue", "fs", "stringr",
+            "arrow", "qs", "dplyr", "tibble", "purrr", "glue", "fs", "stringr", "lubridate",
             "tidyr", "slider", "nflfastR", "nflreadr", "nflseedR", "readr"
           ))'
           Rscript -e 'install.packages(".", repos = NULL, type = "source")'

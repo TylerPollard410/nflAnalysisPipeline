@@ -27,7 +27,7 @@ season_standings_ds <- open_dataset(
   format = "parquet"
 )
 #season_standings_ds <- compute_season_standings_data(game_data)
-print(head(collect(filter(season_standings_ds, season == 2024))))
+#print(head(collect(filter(season_standings_ds, season == 2024))))
 # #load(url("https://github.com/TylerPollard410/NFL-Analysis-Test/raw/refs/heads/main/app/data/seasonStandings.rda"))
 # #seasonStandings <- tbl(con, "seasonStandings")
 # load(file = "./data/seasonStandings.rda")

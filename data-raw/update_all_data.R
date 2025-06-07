@@ -20,6 +20,7 @@ library(stringr)
 library(tidyr)
 library(glue)
 library(slider)
+library(lubridate)
 
 # 1. Load all R/ functions
 # if (interactive()) {
@@ -55,6 +56,10 @@ all_seasons <- 2006:nflreadr::most_recent_season()
 
 id_cols <- c("game_id", "season", "week", "week_seq", "team", "opponent")
 
+# Prior Releases ----
+nflverse_data_releases <- nflverse_releases()
+new_releases
+
 # 5. Data generation steps
 # game_data --------
 cat("%%%% Generating game_data %%%%
@@ -71,7 +76,19 @@ game_data_long <- compute_game_data_long(game_df = game_data)
 # pbp_data --------
 cat("%%%% Generating pbp_data %%%%
 ")
-pbp_data <- compute_pbp_data(seasons = all_seasons)
+latest_pbp_release <- nflverse_data_releases |>
+  filter(release_name == "pbp") |>
+  pull(timestamp) |>
+  date()
+load(file = "artifacts/data-archive/last_pbp_release.rda")
+
+if(latest_pbp_release > last_pbp_release) {
+  pbp_data <- compute_pbp_data(seasons = all_seasons)
+  last_pbp_release <- attr(pbp_data, which = "nflverse_timestamp") |> date()
+  save(last_pbp_release, file = "artifacts/data-archive/last_pbp_release.rda")
+} else{
+  cat("%%%% pbp_data up-to-date %%%% \n")
+}
 #arrow::write_parquet(pbp_data, "artifacts/data/pbp_data.parquet")
 
 # player_offense_data --------

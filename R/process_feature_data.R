@@ -42,12 +42,12 @@ process_elo_data <- function(base_df, elo_raw) {
     elo_long,
     by = c("game_id", "team", "opponent")
   ) |>
-    dplyr::mutate(team_elo_post = lag(team_elo_post, n = 1, default = NA_real_),
+    dplyr::mutate(team_elo_post_temp = lag(team_elo_post, n = 1, default = NA_real_),
                   .by = "team") |>
-    dplyr::mutate(team_elo_pre = dplyr::case_when(is.na(team_elo_pre) & !is.na(team_elo_post) & week == 1 ~ 0.6*team_elo_post + 0.4*1500,
-                                                  is.na(team_elo_pre) & !is.na(team_elo_post) & week != 1 ~ team_elo_post,
+    dplyr::mutate(team_elo_pre = dplyr::case_when(is.na(team_elo_pre) & !is.na(team_elo_post_temp) & week == 1 ~ 0.6*team_elo_post_temp + 0.4*1500,
+                                                  is.na(team_elo_pre) & !is.na(team_elo_post_temp) & week != 1 ~ team_elo_post_temp,
                                                   .default = team_elo_pre)) |>
-    dplyr::select(-team_elo_post)
+    dplyr::select(-team_elo_post_temp)
   return(elo_long)
 }
 
@@ -60,7 +60,7 @@ process_elo_data <- function(base_df, elo_raw) {
 #' @export
 #' @noRd
 process_srs_data <- function(base_df, srs_raw) {
-  srs_cols <- setdiff(names(srs_raw), c("season", "week", "team"))
+  srs_cols <- setdiff(names(srs_raw), c("season", "week", "team")) #, "games", "wins", "losses", "ties"
   srs_feat <- srs_raw |>
     add_week_seq() |>
     dplyr::arrange(season, week) |>
